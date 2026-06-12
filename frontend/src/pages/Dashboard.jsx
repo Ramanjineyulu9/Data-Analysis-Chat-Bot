@@ -58,7 +58,7 @@ export default function Dashboard() {
             <p className="text-blue-100 text-sm">You are on the free tier (3 queries/month). Unlock unlimited queries and advanced insights.</p>
           </div>
           <button onClick={handleUpgrade} className="bg-white text-blue-600 px-6 py-2 rounded-lg font-bold hover:bg-slate-50 transition-colors">
-            Upgrade for $19/mo
+            Upgrade for $9/mo
           </button>
         </div>
       )}
