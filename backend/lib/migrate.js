@@ -5,16 +5,6 @@ dotenv.config();
 
 async function migrate() {
   try {
-    // First connect without database to create it if it doesn't exist
-    const tempConnection = await mysql.createConnection({
-      host: process.env.DB_HOST || 'localhost',
-      port: process.env.DB_PORT || 3306,
-      user: process.env.DB_USER || 'datawise_user',
-      password: process.env.DB_PASSWORD || 'datawise_password'
-    });
-    await tempConnection.query(`CREATE DATABASE IF NOT EXISTS \`${process.env.DB_NAME || 'datawise'}\``);
-    await tempConnection.end();
-
     const connection = await pool.getConnection();
 
     await connection.query(`
