@@ -15,7 +15,7 @@ export default function Landing() {
               Your AI Data Analyst
             </h1>
             <p className="mt-6 text-lg leading-8 text-gray-600">
-              Upload your CSV files and ask questions in plain English. Get instant insights, beautiful charts, and follow-up suggestions powered by Claude AI.
+              Upload your CSV files and ask questions in plain English. Get instant insights, beautiful charts, and follow-up suggestions powered by the lightning-fast Llama 3 AI.
             </p>
             <div className="mt-10 flex items-center justify-center gap-x-6">
               {user ? (
@@ -60,7 +60,7 @@ export default function Landing() {
                 <h3 className="text-lg font-semibold leading-8 text-white">Pro</h3>
                 <p className="mt-4 text-sm leading-6 text-gray-300">Unlimited power for data professionals.</p>
                 <p className="mt-6 flex items-baseline gap-x-1">
-                  <span className="text-4xl font-bold tracking-tight text-white">$19</span>
+                  <span className="text-4xl font-bold tracking-tight text-white">$9</span>
                   <span className="text-sm font-semibold leading-6 text-gray-300">/month</span>
                 </p>
                 <ul className="mt-8 space-y-3 text-sm leading-6 text-gray-300">
