@@ -166,8 +166,8 @@ export default function Dashboard() {
                       </div>
                     )}
 
-                    {chat.result.headData && (
-                      <div className="overflow-x-auto rounded-xl border border-slate-200">
+                    {chat.result.headData && (chat.result.cleanedCsv || chat.question.toLowerCase().includes('row') || chat.question.toLowerCase().includes('data')) && (
+                      <div className="overflow-x-auto rounded-xl border border-slate-200 mt-4">
                         <table className="min-w-full divide-y divide-gray-200 text-xs">
                           <thead className="bg-slate-50">
                             <tr>
