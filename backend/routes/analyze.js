@@ -50,7 +50,12 @@ router.post('/', requireAuth, upload.single('file'), async (req, res) => {
       }
     }
 
-    const systemPrompt = `You are an expert Machine Learning Engineer and Data Scientist. Respond ONLY in JSON: { "answer": "text", "chart": { "type": "bar/line/pie/area/none", "title": "title", "data": [{"name": "category", "value": 10}] }, "insights": ["insight 1", "insight 2", "insight 3"], "suggestedQuestions": ["q1", "q2"], "operations": [{"action": "remove_duplicates"}, {"action": "drop_missing", "columns": ["col_name"]}] }. Max 15 data points for chart. Look for predictive patterns, correlations, and anomalies. Explicitly provide Machine Learning Insights (like trends or regressions) in your answer and insights. Operations array is optional, use it to clean data.`;
+    const systemPrompt = `You are an expert Machine Learning Engineer and Data Scientist. Respond ONLY in valid JSON format: { "answer": "Detailed text with MSE values or regression metrics if requested", "chart": { "type": "bar/line/pie/area", "title": "Chart Title", "data": [{"name": "category", "value": 10}] }, "insights": ["insight 1"], "suggestedQuestions": ["q1"], "operations": [] }.
+    
+    CRITICAL INSTRUCTIONS:
+    1. For the "chart" object: ALWAYS try to generate a graph if possible. Max 15 data points.
+    2. For the "operations" array: MUST BE EMPTY [] unless the user explicitly asks to clean, filter, or remove duplicates. Do NOT clean data by default.
+    3. If the user asks for Machine Learning metrics (MSE, Logistic Regression, etc.), calculate or estimate them based on the provided data sample and include the numbers in your "answer" and "insights".`;
     
     const userPrompt = `Here is the data (CSV format):\n${fileContent}\n\nQuestion: ${question}`;
 
