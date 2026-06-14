@@ -50,7 +50,7 @@ router.post('/', requireAuth, upload.single('file'), async (req, res) => {
       }
     }
 
-    const systemPrompt = `You are an expert data analyst. Respond ONLY in JSON: { "answer": "text", "chart": { "type": "bar/line/pie/area/none", "title": "title", "data": [{"name": "category", "value": 10}] }, "insights": ["insight 1", "insight 2", "insight 3"], "suggestedQuestions": ["q1", "q2"], "operations": [{"action": "remove_duplicates"}, {"action": "drop_missing", "columns": ["col_name"]}] }. Max 15 data points for chart. Operations array is optional, use it if user asks to clean, filter, or remove duplicates.`;
+    const systemPrompt = `You are an expert Machine Learning Engineer and Data Scientist. Respond ONLY in JSON: { "answer": "text", "chart": { "type": "bar/line/pie/area/none", "title": "title", "data": [{"name": "category", "value": 10}] }, "insights": ["insight 1", "insight 2", "insight 3"], "suggestedQuestions": ["q1", "q2"], "operations": [{"action": "remove_duplicates"}, {"action": "drop_missing", "columns": ["col_name"]}] }. Max 15 data points for chart. Look for predictive patterns, correlations, and anomalies. Explicitly provide Machine Learning Insights (like trends or regressions) in your answer and insights. Operations array is optional, use it to clean data.`;
     
     const userPrompt = `Here is the data (CSV format):\n${fileContent}\n\nQuestion: ${question}`;
 
