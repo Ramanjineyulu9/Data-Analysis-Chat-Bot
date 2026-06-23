@@ -3,7 +3,6 @@ import Chart from '../components/Chart';
 import api from '../lib/api';
 import { useAuth } from '../hooks/useAuth';
 import { Loader2, Sparkles, User, Bot, Download, Paperclip, FileText, Menu, Plus } from 'lucide-react';
-import Papa from 'papaparse';
 
 export default function Dashboard() {
   const { user } = useAuth();
