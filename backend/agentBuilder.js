@@ -1,15 +1,14 @@
 const { Agent } = require('@mastra/core/agent');
 const { createTool } = require('@mastra/core/tools');
 const { z } = require('zod');
-const { createOpenAI } = require('@ai-sdk/openai');
+const { createGroq } = require('@ai-sdk/groq');
 const Papa = require('papaparse');
 
-const groqProvider = createOpenAI({
-  baseURL: 'https://api.groq.com/openai/v1',
-  apiKey: process.env.GROQ_API_KEY || 'dummy_key',
-});
-
 function buildAgent(csvDataString) {
+  const groqProvider = createGroq({
+    apiKey: process.env.GROQ_API_KEY,
+  });
+
   let parsed = Papa.parse(csvDataString, { header: true, skipEmptyLines: true });
   let dataRows = parsed.data;
   let operationsLog = [];
