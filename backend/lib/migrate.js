@@ -49,9 +49,10 @@ async function migrate() {
 
     // Safely attempt to add chat_id if it doesn't exist (for existing databases)
     try {
-      await connection.query('ALTER TABLE analyses ADD COLUMN chat_id VARCHAR(255) DEFAULT "default"');
+      await connection.query("ALTER TABLE analyses ADD COLUMN chat_id VARCHAR(255) DEFAULT 'default'");
+      console.log("Successfully added chat_id column to analyses table.");
     } catch (e) {
-      // Column might already exist, ignore
+      console.log("chat_id alter table note:", e.message);
     }
 
     console.log('Database migrated successfully');
