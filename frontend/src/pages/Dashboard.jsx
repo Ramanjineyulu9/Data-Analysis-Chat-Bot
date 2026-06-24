@@ -9,6 +9,7 @@ export default function Dashboard() {
   const [file, setFile] = useState(null);
   const [question, setQuestion] = useState('');
   const [loading, setLoading] = useState(false);
+  const [chatId, setChatId] = useState(() => Date.now().toString());
   const [chatHistory, setChatHistory] = useState([]);
   const [savedChats, setSavedChats] = useState([]);
   const [error, setError] = useState('');
@@ -62,6 +63,7 @@ export default function Dashboard() {
       const formData = new FormData();
       if (file) formData.append('file', file);
       formData.append('question', currentQuestion);
+      formData.append('chatId', chatId);
 
       const res = await api.post('/api/analyze', formData);
       
@@ -84,17 +86,24 @@ export default function Dashboard() {
     }
   };
 
+  const startNewChat = () => {
+    setChatId(Date.now().toString());
+    setChatHistory([]);
+    setFile(null);
+  };
+
   const loadSavedChat = (saved) => {
-    // For now, loading a saved chat replaces the current session view with that specific interaction
-    setChatHistory([{
-      id: saved.id,
-      question: saved.question,
+    setChatId(saved.chat_id);
+    const reconstructedHistory = saved.messages.map((m, idx) => ({
+      id: m.id || idx,
+      question: m.question,
       result: {
-        answer: saved.answer,
-        chart: saved.chart_json ? JSON.parse(saved.chart_json) : { type: 'none' },
+        answer: m.answer,
+        chart: m.chart_json ? JSON.parse(m.chart_json) : { type: 'none' },
         insights: [],
       }
-    }]);
+    }));
+    setChatHistory(reconstructedHistory);
     if (window.innerWidth < 1024) setSidebarOpen(false);
   };
 
@@ -127,7 +136,7 @@ export default function Dashboard() {
       `}>
         <div className="p-4">
           <button 
-            onClick={() => setChatHistory([])}
+            onClick={startNewChat}
             className="w-full flex items-center gap-2 bg-white hover:bg-slate-50 border border-[#e5e3d8] rounded-lg px-4 py-3 text-sm font-medium transition-colors text-slate-700 shadow-sm"
           >
             <Plus className="w-4 h-4" />
@@ -139,11 +148,11 @@ export default function Dashboard() {
           <h3 className="px-3 py-2 text-xs font-semibold text-slate-500 uppercase tracking-wider">Recent Analyses</h3>
           {savedChats.map((chat) => (
             <button 
-              key={chat.id}
+              key={chat.chat_id}
               onClick={() => loadSavedChat(chat)}
-              className="w-full text-left px-3 py-2.5 rounded-lg hover:bg-[#e8e6dc] text-sm text-slate-700 transition-colors truncate"
+              className={`w-full text-left px-3 py-2.5 rounded-lg text-sm text-slate-700 transition-colors truncate ${chatId === chat.chat_id ? 'bg-[#e8e6dc] font-medium' : 'hover:bg-[#e8e6dc]/50'}`}
             >
-              {chat.question}
+              {chat.title}
             </button>
           ))}
           {savedChats.length === 0 && (
@@ -173,10 +182,10 @@ export default function Dashboard() {
       </div>
 
       {/* Main Chat Area */}
-      <div className="flex-1 flex flex-col items-center relative w-full">
+      <div className="flex-1 flex flex-col items-center w-full h-full">
         
         {/* Chat Feed */}
-        <div className="flex-1 w-full max-w-4xl overflow-y-auto p-4 md:p-8 custom-scrollbar scroll-smooth">
+        <div className="flex-1 w-full max-w-4xl overflow-y-auto p-4 md:p-8 custom-scrollbar scroll-smooth flex flex-col">
           {chatHistory.length === 0 && !loading && (
             <div className="h-full flex flex-col items-center justify-center text-slate-400 space-y-6">
               <div className="w-16 h-16 bg-[#e8e6dc] rounded-2xl flex items-center justify-center shadow-sm">
@@ -260,12 +269,12 @@ export default function Dashboard() {
               </div>
             )}
             
-            <div ref={chatEndRef} />
+            <div ref={chatEndRef} className="h-4" />
           </div>
         </div>
 
-        {/* Floating Input Area */}
-        <div className="absolute bottom-0 left-0 w-full bg-gradient-to-t from-[#FDFCF8] via-[#FDFCF8] to-transparent pt-10 pb-6 px-4 md:px-8 flex justify-center">
+        {/* Floating Input Area (Now anchored to bottom of flex container) */}
+        <div className="w-full bg-[#FDFCF8] flex justify-center pb-6 pt-2 px-4 md:px-8 shrink-0">
           <div className="w-full max-w-3xl">
             {error && <div className="mb-2 text-red-500 text-sm font-medium px-4">{error}</div>}
             

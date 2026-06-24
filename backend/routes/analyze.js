@@ -32,7 +32,7 @@ router.post('/', requireAuth, upload.single('file'), async (req, res) => {
   }
 
   try {
-    const { question } = req.body;
+    const { question, chatId } = req.body;
     const file = req.file;
     let fileContent = '';
     let fileName = 'No file provided';
@@ -42,32 +42,25 @@ router.post('/', requireAuth, upload.single('file'), async (req, res) => {
       fileName = file.originalname;
     }
 
-    // Initialize Mastra Agent with file data
     const { agent, getContext } = buildAgent(fileContent);
 
-    // Fetch conversation history from MySQL for Agent Memory
     const connection = await pool.getConnection();
     const [historyRows] = await connection.query(
-      'SELECT question, answer FROM analyses WHERE user_id = ? ORDER BY created_at DESC LIMIT 5', 
-      [userId]
+      'SELECT question, answer FROM analyses WHERE user_id = ? AND chat_id = ? ORDER BY created_at DESC LIMIT 5', 
+      [userId, chatId || 'default']
     );
 
-    // Format Memory for Mastra
     const messages = [];
-    // Reverse because we queried DESC (newest first), but we want chronological order
     for (let row of historyRows.reverse()) {
       messages.push({ role: 'user', content: row.question });
       messages.push({ role: 'assistant', content: row.answer });
     }
     
-    // Add current question
     messages.push({ role: 'user', content: question });
 
-    // Execute Agent Loop (Agent will call tools automatically)
     const response = await agent.generate(messages);
     const answerText = response.text;
 
-    // Retrieve tool execution results
     const context = getContext();
     const { dataRows, operationsLog, chartConfig } = context;
 
@@ -85,21 +78,20 @@ router.post('/', requireAuth, upload.single('file'), async (req, res) => {
       cleanedCsv = Papa.unparse(dataRows);
     }
 
-    // We no longer need the AI to format JSON! We build the response payload manually.
     const finalResult = {
       answer: answerText,
       chart: chartConfig || { type: 'none' },
-      insights: [], // Machine Learning insights are now written directly into the answerText by the agent
+      insights: [], 
       headData: headData,
       cleanedCsv: cleanedCsv
     };
 
-    // Save to memory
     await connection.query(
-      'INSERT INTO analyses (id, user_id, file_name, question, answer, chart_json) VALUES (?, ?, ?, ?, ?, ?)',
+      'INSERT INTO analyses (id, user_id, chat_id, file_name, question, answer, chart_json) VALUES (?, ?, ?, ?, ?, ?, ?)',
       [
         crypto.randomUUID(), 
         userId, 
+        chatId || 'default',
         fileName, 
         question, 
         answerText, 
@@ -119,9 +111,30 @@ router.post('/', requireAuth, upload.single('file'), async (req, res) => {
 router.get('/history', requireAuth, async (req, res) => {
   try {
     const connection = await pool.getConnection();
-    const [rows] = await connection.query('SELECT * FROM analyses WHERE user_id = ? ORDER BY created_at DESC', [req.user.id]);
+    // Fetch all, we will group them in frontend or backend
+    const [rows] = await connection.query('SELECT * FROM analyses WHERE user_id = ? ORDER BY created_at ASC', [req.user.id]);
     connection.release();
-    res.json(rows);
+    
+    // Group by chat_id
+    const grouped = {};
+    rows.forEach(row => {
+      const cid = row.chat_id || 'default';
+      if (!grouped[cid]) {
+        grouped[cid] = {
+          chat_id: cid,
+          title: row.question, // First question becomes title
+          updated_at: row.created_at,
+          messages: []
+        };
+      }
+      grouped[cid].messages.push(row);
+      grouped[cid].updated_at = row.created_at; // Update to latest
+    });
+    
+    // Sort by updated_at DESC
+    const sortedChats = Object.values(grouped).sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at));
+
+    res.json(sortedChats);
   } catch (error) {
     res.status(500).json({ error: 'Could not fetch history' });
   }

@@ -37,6 +37,7 @@ async function migrate() {
       CREATE TABLE IF NOT EXISTS analyses (
         id VARCHAR(36) PRIMARY KEY,
         user_id VARCHAR(36) NOT NULL,
+        chat_id VARCHAR(255) DEFAULT 'default',
         file_name VARCHAR(255) NOT NULL,
         question TEXT NOT NULL,
         answer TEXT,
@@ -45,6 +46,13 @@ async function migrate() {
         FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
       );
     `);
+
+    // Safely attempt to add chat_id if it doesn't exist (for existing databases)
+    try {
+      await connection.query('ALTER TABLE analyses ADD COLUMN chat_id VARCHAR(255) DEFAULT "default"');
+    } catch (e) {
+      // Column might already exist, ignore
+    }
 
     console.log('Database migrated successfully');
     connection.release();
