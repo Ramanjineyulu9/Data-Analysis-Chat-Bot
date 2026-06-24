@@ -141,18 +141,27 @@ function buildAgent(csvDataString) {
           const rSquared = ss.rSquared(dataPoints, line);
           
           let mse = 0;
-          for(let pt of dataPoints) {
+          let chartData = [];
+          for(let i=0; i<dataPoints.length; i++) {
+            let pt = dataPoints[i];
             let pred = line(pt[0]);
             mse += Math.pow(pred - pt[1], 2);
+            if (i < 50) chartData.push({ Actual: pt[1], Predicted: Number(pred.toFixed(4)) });
           }
           mse = mse / dataPoints.length;
+
+          chartConfig = {
+            type: 'line',
+            config: { xAxis: 'Actual', yAxis: 'Predicted' },
+            data: chartData
+          };
 
           operationsLog.push(`Trained Linear Regression on ${targetColumn} vs ${featureColumns[0]}`);
           return {
             equation: `y = ${mb.m.toFixed(4)}x + ${mb.b.toFixed(4)}`,
             rSquared: rSquared.toFixed(4),
             mse: mse.toFixed(4),
-            samples: `Predicted Y for first X (${X[0][0]}) is ${line(X[0][0]).toFixed(4)} (Actual: ${y[0]})`
+            message: 'A line chart comparing Actual vs Predicted values has been automatically generated.'
           };
         } 
         
@@ -162,15 +171,23 @@ function buildAgent(csvDataString) {
           const predictions = dt.predict(X);
           
           let mse = 0;
+          let chartData = [];
           for(let i=0; i<y.length; i++) {
             mse += Math.pow(predictions[i] - y[i], 2);
+            if (i < 50) chartData.push({ Actual: y[i], Predicted: Number(predictions[i].toFixed(4)) });
           }
           mse = mse / y.length;
+
+          chartConfig = {
+            type: 'line',
+            config: { xAxis: 'Actual', yAxis: 'Predicted' },
+            data: chartData
+          };
 
           operationsLog.push(`Trained Decision Tree Regression on ${targetColumn}`);
           return {
             mse: mse.toFixed(4),
-            samples: `Predicted Y for first row is ${predictions[0].toFixed(4)} (Actual: ${y[0]})`
+            message: 'A line chart comparing Actual vs Predicted values has been automatically generated.'
           };
         }
 
@@ -212,8 +229,8 @@ function buildAgent(csvDataString) {
     instructions: `
       You are an expert Data Scientist AI capable of running Machine Learning models natively.
       1. Always use 'get_data_summary' first to read the CSV headers.
-      2. If asked to predict, forecast, or train an ML model, use 'run_ml_model' (Linear Regression or Decision Trees).
-      3. If asked to plot data, use 'generate_chart'.
+      2. If asked to predict, forecast, or train an ML model, use 'run_ml_model' (Linear Regression or Decision Trees). A chart will automatically be generated for you, so do not call 'generate_chart' if you ran an ML model.
+      3. If asked to plot general data, use 'generate_chart'.
       4. DO NOT use 'clean_data' unless explicitly requested to drop rows or filter the dataset.
       5. CRITICAL: After calling a tool, you MUST write a detailed, professional text response summarizing the mathematical results to the user. NEVER return an empty text response.
     `,
