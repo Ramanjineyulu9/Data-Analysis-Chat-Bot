@@ -53,7 +53,7 @@ router.post('/', requireAuth, upload.single('file'), async (req, res) => {
     const answerText = response.text;
 
     const context = getContext();
-    const { dataRows, operationsLog, chartConfig } = context;
+    const { dataRows, operationsLog, chartConfig, metrics, charts } = context;
 
     let headData = null;
     let cleanedCsv = null;
@@ -68,8 +68,6 @@ router.post('/', requireAuth, upload.single('file'), async (req, res) => {
     if (operationsLog.length > 0) {
       cleanedCsv = Papa.unparse(dataRows);
     }
-
-    const { chartConfig, metrics, charts } = getContext();
 
     const finalResult = {
       answer: answerText,
