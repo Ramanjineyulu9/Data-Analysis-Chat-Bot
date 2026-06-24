@@ -46,7 +46,7 @@ router.post('/', requireAuth, upload.single('file'), async (req, res) => {
 
     const connection = await pool.getConnection();
     const [historyRows] = await connection.query(
-      'SELECT question, answer FROM analyses WHERE user_id = ? AND chat_id = ? ORDER BY created_at DESC LIMIT 5', 
+      'SELECT question, answer FROM analyses WHERE user_id = ? AND chat_id = ? ORDER BY created_at DESC LIMIT 2', 
       [userId, chatId || 'default']
     );
 
