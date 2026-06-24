@@ -94,12 +94,17 @@ function buildAgent(csvDataString) {
     id: 'run_ml_model',
     description: 'Use this to train and run a Machine Learning model (Linear Regression, Decision Tree) on the dataset. It returns predictions, MSE, and accuracy/R-squared.',
     inputSchema: z.object({
-      modelType: z.enum(['linear_regression', 'decision_tree_regression', 'decision_tree_classifier']).describe('The ML model to run'),
-      targetColumn: z.string().describe('The Y variable column name'),
-      featureColumns: z.array(z.string()).describe('The X variable column names'),
+      modelType: z.string().describe('Must be: linear_regression, decision_tree_regression, or decision_tree_classifier'),
+      targetColumn: z.any().describe('The Y variable column name'),
+      featureColumns: z.any().describe('The X variable column names'),
     }),
     execute: async ({ context }) => {
-      const { modelType, targetColumn, featureColumns } = context;
+      let { modelType, targetColumn, featureColumns } = context;
+      
+      // Sanitize inputs dynamically to prevent crashes
+      if (typeof targetColumn !== 'string') targetColumn = String(targetColumn);
+      if (typeof featureColumns === 'string') featureColumns = [featureColumns];
+      if (!Array.isArray(featureColumns)) return { error: 'featureColumns must be an array of strings' };
       
       const validRows = dataRows.filter(row => {
         if (row[targetColumn] === undefined || row[targetColumn] === null || String(row[targetColumn]).trim() === '') return false;
