@@ -94,15 +94,30 @@ export default function Dashboard() {
 
   const loadSavedChat = (saved) => {
     setChatId(saved.chat_id);
-    const reconstructedHistory = saved.messages.map((m, idx) => ({
-      id: m.id || idx,
-      question: m.question,
-      result: {
-        answer: m.answer,
-        chart: m.chart_json ? (typeof m.chart_json === 'string' ? JSON.parse(m.chart_json) : m.chart_json) : { type: 'none' },
-        insights: [],
+    const reconstructedHistory = saved.messages.map((m, idx) => {
+      let parsedChart = { type: 'none' };
+      if (m.chart_json) {
+        if (typeof m.chart_json === 'string') {
+          try {
+            parsedChart = JSON.parse(m.chart_json);
+          } catch (e) {
+            console.error('Failed to parse chart_json:', m.chart_json);
+            parsedChart = { type: 'none' };
+          }
+        } else {
+          parsedChart = m.chart_json;
+        }
       }
-    }));
+      return {
+        id: m.id || idx,
+        question: m.question,
+        result: {
+          answer: m.answer,
+          chart: parsedChart,
+          insights: [],
+        }
+      };
+    });
     setChatHistory(reconstructedHistory);
     if (window.innerWidth < 1024) setSidebarOpen(false);
   };
