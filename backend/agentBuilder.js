@@ -130,25 +130,33 @@ function buildAgent(csvDataString) {
         return { error: 'Error parsing columns as numbers' };
       }
 
-      if (X.length < 3) return { error: 'Not enough numeric data points to train model' };
+      if (X.length < 5) return { error: 'Not enough numeric data points to train model and split 80/20' };
+
+      // 80/20 Train-Test Split
+      const splitIdx = Math.floor(X.length * 0.8);
+      const X_train = X.slice(0, splitIdx);
+      const y_train = y.slice(0, splitIdx);
+      const X_test = X.slice(splitIdx);
+      const y_test = y.slice(splitIdx);
 
       try {
         if (modelType === 'linear_regression') {
           if (featureColumns.length > 1) return { error: 'simple-statistics linear regression only supports 1 feature column' };
-          const dataPoints = X.map((xRow, i) => [xRow[0], y[i]]);
-          const mb = ss.linearRegression(dataPoints);
+          const dataPointsTrain = X_train.map((xRow, i) => [xRow[0], y_train[i]]);
+          const dataPointsTest = X_test.map((xRow, i) => [xRow[0], y_test[i]]);
+          
+          const mb = ss.linearRegression(dataPointsTrain);
           const line = ss.linearRegressionLine(mb);
-          const rSquared = ss.rSquared(dataPoints, line);
           
           let mse = 0;
           let chartData = [];
-          for(let i=0; i<dataPoints.length; i++) {
-            let pt = dataPoints[i];
+          for(let i=0; i<dataPointsTest.length; i++) {
+            let pt = dataPointsTest[i];
             let pred = line(pt[0]);
             mse += Math.pow(pred - pt[1], 2);
             if (i < 50) chartData.push({ Actual: pt[1], Predicted: Number(pred.toFixed(4)) });
           }
-          mse = mse / dataPoints.length;
+          mse = mse / dataPointsTest.length;
 
           chartConfig = {
             type: 'line',
@@ -156,27 +164,26 @@ function buildAgent(csvDataString) {
             data: chartData
           };
 
-          operationsLog.push(`Trained Linear Regression on ${targetColumn} vs ${featureColumns[0]}`);
+          operationsLog.push(`Trained Linear Regression on ${targetColumn} vs ${featureColumns[0]} (80/20 split)`);
           return {
             equation: `y = ${mb.m.toFixed(4)}x + ${mb.b.toFixed(4)}`,
-            rSquared: rSquared.toFixed(4),
             mse: mse.toFixed(4),
-            message: 'A line chart comparing Actual vs Predicted values has been automatically generated.'
+            message: 'Model trained on 80% data. MSE calculated on 20% test data. Line chart of actual vs predicted test values generated.'
           };
         } 
         
         else if (modelType === 'decision_tree_regression') {
           const dt = new DecisionTreeRegression();
-          dt.train(X, y);
-          const predictions = dt.predict(X);
+          dt.train(X_train, y_train);
+          const predictions = dt.predict(X_test);
           
           let mse = 0;
           let chartData = [];
-          for(let i=0; i<y.length; i++) {
-            mse += Math.pow(predictions[i] - y[i], 2);
-            if (i < 50) chartData.push({ Actual: y[i], Predicted: Number(predictions[i].toFixed(4)) });
+          for(let i=0; i<y_test.length; i++) {
+            mse += Math.pow(predictions[i] - y_test[i], 2);
+            if (i < 50) chartData.push({ Actual: y_test[i], Predicted: Number(predictions[i].toFixed(4)) });
           }
-          mse = mse / y.length;
+          mse = mse / y_test.length;
 
           chartConfig = {
             type: 'line',
@@ -184,10 +191,10 @@ function buildAgent(csvDataString) {
             data: chartData
           };
 
-          operationsLog.push(`Trained Decision Tree Regression on ${targetColumn}`);
+          operationsLog.push(`Trained Decision Tree Regression on ${targetColumn} (80/20 split)`);
           return {
             mse: mse.toFixed(4),
-            message: 'A line chart comparing Actual vs Predicted values has been automatically generated.'
+            message: 'Model trained on 80% data. MSE calculated on 20% test data. Line chart of actual vs predicted test values generated.'
           };
         }
 
@@ -202,20 +209,27 @@ function buildAgent(csvDataString) {
               yCatFiltered.push(yCat[i]);
             }
           }
+          
+          const splitIdxCat = Math.floor(XCat.length * 0.8);
+          const XCat_train = XCat.slice(0, splitIdxCat);
+          const yCat_train = yCatFiltered.slice(0, splitIdxCat);
+          const XCat_test = XCat.slice(splitIdxCat);
+          const yCat_test = yCatFiltered.slice(splitIdxCat);
+
           const dt = new DecisionTreeClassifier();
-          dt.train(XCat, yCatFiltered);
-          const predictions = dt.predict(XCat);
+          dt.train(XCat_train, yCat_train);
+          const predictions = dt.predict(XCat_test);
           
           let correct = 0;
-          for(let i=0; i<yCatFiltered.length; i++) {
-            if (predictions[i] === yCatFiltered[i]) correct++;
+          for(let i=0; i<yCat_test.length; i++) {
+            if (predictions[i] === yCat_test[i]) correct++;
           }
-          const accuracy = correct / yCatFiltered.length;
+          const accuracy = correct / yCat_test.length;
 
-          operationsLog.push(`Trained Decision Tree Classifier on ${targetColumn}`);
+          operationsLog.push(`Trained Decision Tree Classifier on ${targetColumn} (80/20 split)`);
           return {
             accuracy: (accuracy * 100).toFixed(2) + '%',
-            samples: `Predicted Y for first row is ${predictions[0]} (Actual: ${yCatFiltered[0]})`
+            message: 'Model trained on 80% data. Accuracy calculated on 20% test data.'
           };
         }
       } catch(e) {
