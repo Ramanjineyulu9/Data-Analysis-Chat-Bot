@@ -217,7 +217,7 @@ function buildAgent(csvDataString) {
       4. DO NOT use 'clean_data' unless explicitly requested to drop rows or filter the dataset.
       5. CRITICAL: After calling a tool, you MUST write a detailed, professional text response summarizing the mathematical results to the user. NEVER return an empty text response.
     `,
-    model: groqProvider('llama-3.3-70b-versatile'),
+    model: groqProvider('llama-3.1-8b-instant'),
     tools: { getDataSummaryTool, getFullDataTool, cleanDataTool, generateChartTool, runMlModelTool },
   });
 
