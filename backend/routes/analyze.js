@@ -44,18 +44,9 @@ router.post('/', requireAuth, upload.single('file'), async (req, res) => {
 
     const { agent, getContext } = buildAgent(fileContent);
 
-    const connection = await pool.getConnection();
-    const [historyRows] = await connection.query(
-      'SELECT question, answer FROM analyses WHERE user_id = ? AND chat_id = ? ORDER BY created_at DESC LIMIT 2', 
-      [userId, chatId || 'default']
-    );
-
     const messages = [];
-    for (let row of historyRows.reverse()) {
-      messages.push({ role: 'user', content: row.question });
-      messages.push({ role: 'assistant', content: row.answer });
-    }
     
+    // Add current question
     messages.push({ role: 'user', content: question });
 
     const response = await agent.generate(messages);
@@ -86,6 +77,7 @@ router.post('/', requireAuth, upload.single('file'), async (req, res) => {
       cleanedCsv: cleanedCsv
     };
 
+    const connection = await pool.getConnection();
     await connection.query(
       'INSERT INTO analyses (id, user_id, chat_id, file_name, question, answer, chart_json) VALUES (?, ?, ?, ?, ?, ?, ?)',
       [
