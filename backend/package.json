@@ -23,11 +23,13 @@
     "express": "^5.2.1",
     "groq-sdk": "^1.2.1",
     "jsonwebtoken": "^9.0.3",
+    "ml-cart": "^2.1.1",
     "multer": "^2.1.1",
     "mysql2": "^3.22.5",
     "papaparse": "^5.5.3",
     "passport": "^0.7.0",
     "passport-google-oauth20": "^2.0.0",
+    "simple-statistics": "^7.9.0",
     "stripe": "^22.2.0",
     "zod": "^4.4.3"
   },
