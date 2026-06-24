@@ -99,7 +99,7 @@ export default function Dashboard() {
       question: m.question,
       result: {
         answer: m.answer,
-        chart: m.chart_json ? JSON.parse(m.chart_json) : { type: 'none' },
+        chart: m.chart_json ? (typeof m.chart_json === 'string' ? JSON.parse(m.chart_json) : m.chart_json) : { type: 'none' },
         insights: [],
       }
     }));
