@@ -96,16 +96,28 @@ export default function Dashboard() {
     setChatId(saved.chat_id);
     const reconstructedHistory = saved.messages.map((m, idx) => {
       let parsedChart = { type: 'none' };
+      let parsedMetrics = [];
+      let parsedCharts = [];
+      
       if (m.chart_json) {
+        let rawObj;
         if (typeof m.chart_json === 'string') {
           try {
-            parsedChart = JSON.parse(m.chart_json);
+            rawObj = JSON.parse(m.chart_json);
           } catch (e) {
             console.error('Failed to parse chart_json:', m.chart_json);
-            parsedChart = { type: 'none' };
+            rawObj = { type: 'none' };
           }
         } else {
-          parsedChart = m.chart_json;
+          rawObj = m.chart_json;
+        }
+
+        if (rawObj && rawObj.metrics !== undefined && rawObj.charts !== undefined) {
+          parsedChart = rawObj.chartConfig;
+          parsedMetrics = rawObj.metrics;
+          parsedCharts = rawObj.charts;
+        } else {
+          parsedChart = rawObj;
         }
       }
       return {
@@ -114,6 +126,8 @@ export default function Dashboard() {
         result: {
           answer: m.answer,
           chart: parsedChart,
+          metrics: parsedMetrics,
+          charts: parsedCharts,
           insights: [],
         }
       };
@@ -232,10 +246,40 @@ export default function Dashboard() {
                       <p>{chat.result.answer}</p>
                     </div>
 
-                    {chat.result.chart && chat.result.chart.type !== 'none' && (
-                      <div className="border border-[#e5e3d8] rounded-xl p-6 bg-white shadow-sm mt-4">
-                        <Chart chartConfig={chat.result.chart} />
+                    {/* Metrics Grid */}
+                    {chat.result.metrics && chat.result.metrics.length > 0 && (
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
+                        {chat.result.metrics.map((metric, idx) => (
+                          <div key={idx} className="bg-[#f8f7f2] border border-[#e5e3d8] rounded-xl p-4 shadow-sm flex flex-col justify-center">
+                            <div className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">{metric.label}</div>
+                            <div className="text-2xl font-serif text-slate-800">{metric.value}</div>
+                          </div>
+                        ))}
                       </div>
+                    )}
+
+                    {/* Charts Grid */}
+                    {chat.result.charts && chat.result.charts.length > 0 ? (
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                        {chat.result.charts.map((chartItem, idx) => (
+                          <div key={idx} className="border border-[#e5e3d8] rounded-xl p-6 bg-white shadow-sm flex flex-col h-80">
+                            {chartItem.title && <h4 className="text-sm font-semibold text-slate-800 mb-4">{chartItem.title}</h4>}
+                            <div className="flex-1 min-h-0 relative">
+                              <div className="absolute inset-0">
+                                <Chart chartConfig={chartItem} />
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      chat.result.chart && chat.result.chart.type !== 'none' && (
+                        <div className="border border-[#e5e3d8] rounded-xl p-6 bg-white shadow-sm mt-6 h-80 relative">
+                          <div className="absolute inset-6">
+                            <Chart chartConfig={chat.result.chart} />
+                          </div>
+                        </div>
+                      )
                     )}
 
                     {chat.result.headData && chat.result.cleanedCsv && (

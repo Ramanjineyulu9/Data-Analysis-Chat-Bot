@@ -69,12 +69,23 @@ router.post('/', requireAuth, upload.single('file'), async (req, res) => {
       cleanedCsv = Papa.unparse(dataRows);
     }
 
+    const { chartConfig, metrics, charts } = getContext();
+
     const finalResult = {
       answer: answerText,
       chart: chartConfig || { type: 'none' },
+      metrics: metrics || [],
+      charts: charts || [],
       insights: [], 
       headData: headData,
       cleanedCsv: cleanedCsv
+    };
+
+    // Save extended data into the chart_json column for backward compatibility
+    const extendedChartData = {
+      chartConfig: chartConfig || { type: 'none' },
+      metrics: metrics || [],
+      charts: charts || []
     };
 
     const connection = await pool.getConnection();
@@ -87,7 +98,7 @@ router.post('/', requireAuth, upload.single('file'), async (req, res) => {
         fileName, 
         question, 
         answerText, 
-        chartConfig ? JSON.stringify(chartConfig) : null
+        JSON.stringify(extendedChartData)
       ]
     );
     connection.release();
