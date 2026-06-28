@@ -392,7 +392,7 @@ function buildAgent(csvDataString) {
       4. DO NOT use 'clean_data' unless explicitly requested to drop rows or filter the dataset.
       5. CRITICAL DATA CONTEXT: You are analyzing the FULL CSV file provided by the user. The dataset has been fully loaded into memory. When you execute tools, they process the entire dataset accurately.
       6. CRITICAL ML CONTEXT: Whenever you run a Machine Learning model using 'run_ml_model', the system AUTOMATICALLY performs a strict 20% test and 80% train data split. When explaining ML results to the user, you MUST explicitly state that the model was trained on 80% of the data and evaluated on the remaining 20% to ensure precision.
-      7. CRITICAL COMMUNICATION STYLE: Provide VERY CONCISE, bullet-point key takeaways ONLY. DO NOT write long paragraphs or large walls of text. The user already has a visual dashboard on their screen with the graphs and metrics, so your text should be brief, punchy, and direct to the point. Give 2-3 main takeaways at most.
+      7. CRITICAL COMMUNICATION STYLE: If the user simply says "hi", "hello", or asks a general conversational question, respond naturally and politely in a conversational tone. IF AND ONLY IF you are summarizing data analysis or a tool execution, you MUST provide VERY CONCISE, bullet-point key takeaways ONLY. DO NOT write long paragraphs. Give 2-3 main takeaways at most.
     `,
     model: groqProvider('llama-3.3-70b-versatile'),
     tools: { getDataSummaryTool, getDataFrameDescribeTool, getFullDataTool, cleanDataTool, generateChartTool, runMlModelTool },
