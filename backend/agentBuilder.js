@@ -202,6 +202,7 @@ function buildAgent(csvDataString) {
           let ssRes = 0;
           let yMeanTest = y_test.reduce((a,b) => a+b, 0) / y_test.length;
 
+          let residuals = [];
           let chartData = [];
           for(let i=0; i<dataPointsTest.length; i++) {
             let pt = dataPointsTest[i];
@@ -212,6 +213,7 @@ function buildAgent(csvDataString) {
             mae += Math.abs(pred - actual);
             ssTot += Math.pow(actual - yMeanTest, 2);
             ssRes += Math.pow(actual - pred, 2);
+            residuals.push(actual - pred);
             
             if (i < 50) chartData.push({ Actual: actual, Predicted: Number(pred.toFixed(4)) });
           }
@@ -230,10 +232,27 @@ function buildAgent(csvDataString) {
 
           charts = [{
             type: 'line',
-            title: 'Actual vs Predicted (Test Set)',
+            title: 'Actual vs Predicted',
             config: { xAxis: 'Actual', yAxis: 'Predicted' },
             data: chartData
           }];
+          
+          // Feature Importance (Mocked for single feature LR)
+          charts.push({
+            type: 'bar',
+            title: 'Feature Importance',
+            config: { xAxis: 'name', yAxis: 'value' },
+            data: [{ name: featureColumns[0], value: 100 }]
+          });
+
+          // Residuals
+          let residualData = residuals.slice(0, 15).map((r, i) => ({ name: `Pt ${i+1}`, value: Number(r.toFixed(2)) }));
+          charts.push({
+            type: 'bar',
+            title: 'Residuals (Sample)',
+            config: { xAxis: 'name', yAxis: 'value' },
+            data: residualData
+          });
           
           // Legacy fallback
           chartConfig = charts[0];
@@ -256,6 +275,7 @@ function buildAgent(csvDataString) {
           let ssTot = 0;
           let ssRes = 0;
           let yMeanTest = y_test.reduce((a,b) => a+b, 0) / y_test.length;
+          let residuals = [];
           let chartData = [];
           
           for(let i=0; i<y_test.length; i++) {
@@ -266,6 +286,7 @@ function buildAgent(csvDataString) {
             mae += Math.abs(pred - actual);
             ssTot += Math.pow(actual - yMeanTest, 2);
             ssRes += Math.pow(actual - pred, 2);
+            residuals.push(actual - pred);
             
             if (i < 50) chartData.push({ Actual: actual, Predicted: Number(pred.toFixed(4)) });
           }
@@ -284,7 +305,7 @@ function buildAgent(csvDataString) {
 
           charts = [{
             type: 'line',
-            title: 'Actual vs Predicted (Test Set)',
+            title: 'Actual vs Predicted',
             config: { xAxis: 'Actual', yAxis: 'Predicted' },
             data: chartData
           }];
@@ -297,9 +318,18 @@ function buildAgent(csvDataString) {
 
           charts.push({
             type: 'bar',
-            title: 'Feature Importance (Estimated)',
+            title: 'Feature Importance',
             config: { xAxis: 'name', yAxis: 'value' },
             data: featureImportanceData
+          });
+
+          // Residuals
+          let residualData = residuals.slice(0, 15).map((r, i) => ({ name: `Pt ${i+1}`, value: Number(r.toFixed(2)) }));
+          charts.push({
+            type: 'bar',
+            title: 'Residuals (Sample)',
+            config: { xAxis: 'name', yAxis: 'value' },
+            data: residualData
           });
 
           // Legacy fallback
@@ -362,7 +392,7 @@ function buildAgent(csvDataString) {
       4. DO NOT use 'clean_data' unless explicitly requested to drop rows or filter the dataset.
       5. CRITICAL DATA CONTEXT: You are analyzing the FULL CSV file provided by the user. The dataset has been fully loaded into memory. When you execute tools, they process the entire dataset accurately.
       6. CRITICAL ML CONTEXT: Whenever you run a Machine Learning model using 'run_ml_model', the system AUTOMATICALLY performs a strict 20% test and 80% train data split. When explaining ML results to the user, you MUST explicitly state that the model was trained on 80% of the data and evaluated on the remaining 20% to ensure precision.
-      7. CRITICAL: After calling a tool, you MUST write a detailed, professional text response summarizing the mathematical results to the user. NEVER return an empty text response.
+      7. CRITICAL COMMUNICATION STYLE: Provide VERY CONCISE, bullet-point key takeaways ONLY. DO NOT write long paragraphs or large walls of text. The user already has a visual dashboard on their screen with the graphs and metrics, so your text should be brief, punchy, and direct to the point. Give 2-3 main takeaways at most.
     `,
     model: groqProvider('llama-3.3-70b-versatile'),
     tools: { getDataSummaryTool, getDataFrameDescribeTool, getFullDataTool, cleanDataTool, generateChartTool, runMlModelTool },
