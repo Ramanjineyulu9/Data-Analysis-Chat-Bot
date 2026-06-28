@@ -107,7 +107,8 @@ function buildAgent(csvDataString) {
         safeType = 'bar'; // Fallback instead of crashing
       }
       input.type = safeType;
-      chartConfig = input;
+      chartConfig = input; // legacy
+      charts.push(input); // Add to charts array for dashboard view
       return { success: true, message: `Chart "${input.title}" generated successfully.` };
     }
   });
