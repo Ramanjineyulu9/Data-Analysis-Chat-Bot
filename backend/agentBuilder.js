@@ -1,14 +1,15 @@
 const { Agent } = require('@mastra/core/agent');
 const { createTool } = require('@mastra/core/tools');
 const { z } = require('zod');
-const { createGroq } = require('@ai-sdk/groq');
+const { createOpenAI } = require('@ai-sdk/openai');
 const Papa = require('papaparse');
 const ss = require('simple-statistics');
 const { DecisionTreeRegression, DecisionTreeClassifier } = require('ml-cart');
 
 function buildAgent(csvDataString) {
-  const groqProvider = createGroq({
-    apiKey: process.env.GROQ_API_KEY,
+  const openRouterProvider = createOpenAI({
+    baseURL: 'https://openrouter.ai/api/v1',
+    apiKey: process.env.OPENROUTER_API_KEY,
   });
 
   let parsed = Papa.parse(csvDataString, { header: true, skipEmptyLines: true });
@@ -394,7 +395,7 @@ function buildAgent(csvDataString) {
       6. CRITICAL ML CONTEXT: Whenever you run a Machine Learning model using 'run_ml_model', the system AUTOMATICALLY performs a strict 20% test and 80% train data split. When explaining ML results to the user, you MUST explicitly state that the model was trained on 80% of the data and evaluated on the remaining 20% to ensure precision.
       7. CRITICAL COMMUNICATION STYLE: If the user simply says "hi", "hello", or asks a general conversational question, respond naturally and politely in a conversational tone. IF AND ONLY IF you are summarizing data analysis or a tool execution, you MUST provide VERY CONCISE, bullet-point key takeaways ONLY. DO NOT write long paragraphs. Give 2-3 main takeaways at most.
     `,
-    model: groqProvider('llama3-8b-8192'),
+    model: openRouterProvider('meta-llama/llama-3-8b-instruct:free'),
     tools: { getDataSummaryTool, getDataFrameDescribeTool, getFullDataTool, cleanDataTool, generateChartTool, runMlModelTool },
   });
 
