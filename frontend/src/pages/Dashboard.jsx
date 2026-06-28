@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import Chart from '../components/Chart';
 import api from '../lib/api';
 import { useAuth } from '../hooks/useAuth';
-import { Loader2, Sparkles, Download, Paperclip, FileText, Menu, Plus, Activity, Database, LayoutDashboard, LogOut, ChevronDown, Search, PanelLeftClose, Edit, Bot, Grid, Clock, Library, FolderPlus, ListFilter, Github, Monitor, Mic, ArrowUp } from 'lucide-react';
+import { Loader2, Sparkles, Download, Paperclip, FileText, Menu, Plus, Activity, Database, LayoutDashboard, LogOut, ChevronDown, Search, PanelLeftClose, Edit, Bot, Grid, Clock, Library, FolderPlus, ListFilter, Code, Monitor, Mic, ArrowUp } from 'lucide-react';
 
 export default function Dashboard() {
   const { user, logout } = useAuth();
@@ -454,7 +454,7 @@ export default function Dashboard() {
                       <Plus className="w-4 h-4" />
                     </button>
                     <button className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-[#f2f2f2] text-slate-500 transition-colors border border-[#e5e3d8]">
-                      <Github className="w-4 h-4" />
+                      <Code className="w-4 h-4" />
                     </button>
                     <button className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-[#f2f2f2] text-slate-500 transition-colors border border-[#e5e3d8]">
                       <Monitor className="w-4 h-4" />
