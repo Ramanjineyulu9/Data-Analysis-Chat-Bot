@@ -29,7 +29,7 @@ export default function Landing() {
               <Sparkles className="w-3.5 h-3.5 text-amber-600" /> Powered by Llama 3 on Groq
             </div>
             <h1 className="text-5xl font-serif text-slate-800 sm:text-6xl mb-8 leading-tight">
-              A thoughtful approach to <span className="italic text-amber-700">data analysis.</span>
+              SCUZY: A thoughtful approach to <span className="italic text-amber-700">data analysis.</span>
             </h1>
             <p className="text-lg leading-relaxed text-slate-600 mb-10 max-w-xl mx-auto lg:mx-0">
               Upload your CSV files and converse with an autonomous Data Agent. No formulas, no code. Just intelligent, instant insights and beautiful visual charts.

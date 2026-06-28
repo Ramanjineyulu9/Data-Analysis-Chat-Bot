@@ -218,7 +218,14 @@ export default function Dashboard() {
         </div>
 
         <div className="flex-1 overflow-y-auto px-3 py-4 custom-scrollbar space-y-1">
-          <h3 className="px-3 py-2 text-xs font-semibold text-slate-500 uppercase tracking-wider">Workspaces</h3>
+          {/* File Explorer Integration */}
+          <h3 className="px-3 py-2 text-xs font-semibold text-slate-500 uppercase tracking-wider">File Explorer</h3>
+          <div className={`px-4 py-3 rounded-xl text-sm border flex items-center gap-3 transition-colors ${file ? 'bg-white border-amber-300 shadow-sm' : 'bg-[#f8f7f2] border-[#e5e3d8] border-dashed text-slate-500'}`}>
+             <FileText className={`w-4 h-4 shrink-0 ${file ? 'text-amber-600' : 'text-slate-400'}`} />
+             <span className="truncate">{file ? file.name : "No dataset active"}</span>
+          </div>
+
+          <h3 className="px-3 py-2 mt-6 text-xs font-semibold text-slate-500 uppercase tracking-wider">Workspaces</h3>
           {savedChats.map((chat) => (
             <button 
               key={chat.chat_id}
@@ -294,9 +301,9 @@ export default function Dashboard() {
               <div className="w-20 h-20 bg-white border border-[#e5e3d8] rounded-3xl flex items-center justify-center shadow-sm animate-pulse-slow">
                 <Sparkles className="w-10 h-10 text-amber-600" />
               </div>
-              <h2 className="text-3xl font-serif text-slate-800">What shall we analyze today?</h2>
+              <h2 className="text-3xl font-serif text-slate-800">Welcome to SCUZY</h2>
               <p className="text-slate-500 max-w-md text-center text-[15px] leading-relaxed">
-                I am your Data Agent. Attach a dataset and instruct me to build models, clean rows, or generate interactive charts.
+                I am your autonomous Data Agent. Attach a dataset and instruct me to build models, clean rows, or generate interactive charts.
               </p>
             </div>
           )}
