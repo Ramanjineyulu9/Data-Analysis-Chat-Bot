@@ -1,7 +1,33 @@
 @import "tailwindcss";
+@config "../tailwind.config.js";
 
 @layer base {
   body {
-    @apply bg-slate-50 text-slate-900;
+    @apply bg-deepblue-950 text-slate-100 font-sans;
+  }
+}
+
+@layer utilities {
+  .glass-panel {
+    @apply bg-deepblue-900/40 backdrop-blur-md border border-ocean-500/20 shadow-xl;
+  }
+  .glass-button {
+    @apply bg-ocean-500/10 hover:bg-ocean-500/20 border border-ocean-500/30 text-ocean-300 transition-all;
+  }
+  .gradient-text {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-ocean-300 to-blue-400;
+  }
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    @apply bg-deepblue-800 rounded-full;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    @apply bg-ocean-600;
   }
 }
