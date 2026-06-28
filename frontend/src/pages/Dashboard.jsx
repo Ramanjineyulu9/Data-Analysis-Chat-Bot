@@ -327,7 +327,7 @@ export default function Dashboard() {
                   <div className="w-full max-w-[90%] space-y-4">
                     
                     {/* Simulated Thought Block (Only if data was processed) */}
-                    {(chat.result.metrics?.length > 0 || chat.result.charts?.length > 0 || chat.result.chart || chat.result.headData || chat.result.cleanedCsv) && (
+                    {(chat.result.operationsLog?.length > 0 || chat.result.metrics?.length > 0 || chat.result.charts?.length > 0 || (chat.result.chart && chat.result.chart.type !== 'none') || chat.result.cleanedCsv) && (
                       <div className="bg-[#f8f7f2] border border-[#e5e3d8] rounded-xl p-3 inline-flex items-center gap-3 text-xs text-slate-600 shadow-sm">
                         <Activity className="w-4 h-4 text-slate-400" />
                         <span>Task completed successfully.</span>
