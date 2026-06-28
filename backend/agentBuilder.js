@@ -395,7 +395,7 @@ function buildAgent(csvDataString) {
       6. CRITICAL ML CONTEXT: Whenever you run a Machine Learning model using 'run_ml_model', the system AUTOMATICALLY performs a strict 20% test and 80% train data split. When explaining ML results to the user, you MUST explicitly state that the model was trained on 80% of the data and evaluated on the remaining 20% to ensure precision.
       7. CRITICAL COMMUNICATION STYLE: If the user simply says "hi", "hello", or asks a general conversational question, respond naturally and politely in a conversational tone. IF AND ONLY IF you are summarizing data analysis or a tool execution, you MUST provide VERY CONCISE, bullet-point key takeaways ONLY. DO NOT write long paragraphs. Give 2-3 main takeaways at most.
     `,
-    model: openRouterProvider('meta-llama/llama-3.1-8b-instruct:free'),
+    model: openRouterProvider('google/gemma-2-9b-it:free'),
     tools: { getDataSummaryTool, getDataFrameDescribeTool, getFullDataTool, cleanDataTool, generateChartTool, runMlModelTool },
   });
 
