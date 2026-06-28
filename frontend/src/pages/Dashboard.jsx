@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import Chart from '../components/Chart';
 import api from '../lib/api';
 import { useAuth } from '../hooks/useAuth';
-import { Loader2, Sparkles, Download, Paperclip, FileText, Menu, Plus, Activity, Database, LayoutDashboard, LogOut, ChevronDown } from 'lucide-react';
+import { Loader2, Sparkles, Download, Paperclip, FileText, Menu, Plus, Activity, Database, LayoutDashboard, LogOut, ChevronDown, Search, PanelLeftClose, Edit, Bot, Grid, Clock, Library, FolderPlus, ListFilter, Github, Monitor, Mic, ArrowUp } from 'lucide-react';
 
 export default function Dashboard() {
   const { user, logout } = useAuth();
@@ -200,111 +200,121 @@ export default function Dashboard() {
         <Menu className="w-5 h-5 text-slate-700" />
       </button>
 
-      {/* LEFT SIDEBAR */}
+      {/* LEFT SIDEBAR (Manus Clone) */}
       <div className={`
         ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} 
         transition-transform duration-300 ease-in-out
         absolute lg:relative z-40
-        w-72 h-full bg-white border-r border-[#e5e3d8] flex flex-col shadow-xl
+        w-64 h-full bg-[#f9f9f9] border-r border-[#e5e3d8] flex flex-col shadow-xl lg:shadow-none
       `}>
-        <div className="p-4 border-b border-[#e5e3d8]">
-          <button 
-            onClick={startNewChat}
-            className="w-full flex items-center justify-center gap-2 bg-slate-800 hover:bg-slate-700 text-white rounded-lg px-4 py-3 text-sm font-medium shadow-sm transition-colors"
-          >
-            <Plus className="w-4 h-4" />
-            New Workspace
+        {/* Header */}
+        <div className="p-4 flex items-center justify-between">
+          <div className="flex items-center gap-2 font-serif font-bold text-lg text-slate-800">
+            <Sparkles className="w-5 h-5 text-slate-800" /> scuzy
+          </div>
+          <div className="flex items-center gap-2 text-slate-500">
+            <Search className="w-4 h-4 cursor-pointer hover:text-slate-800 transition-colors" />
+            <PanelLeftClose className="w-4 h-4 cursor-pointer hover:text-slate-800 transition-colors hidden lg:block" onClick={() => setSidebarOpen(false)} />
+          </div>
+        </div>
+
+        {/* Primary Links */}
+        <div className="px-3 py-2 space-y-1">
+          <button onClick={startNewChat} className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-slate-700 hover:bg-[#ebebeb] transition-colors">
+            <Edit className="w-4 h-4 text-slate-500" /> New task
+          </button>
+          <button className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-slate-700 hover:bg-[#ebebeb] transition-colors">
+            <Bot className="w-4 h-4 text-slate-500" /> Agent
+          </button>
+          <button className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-slate-700 hover:bg-[#ebebeb] transition-colors">
+            <Grid className="w-4 h-4 text-slate-500" /> Plugins
+          </button>
+          <button className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-slate-700 hover:bg-[#ebebeb] transition-colors">
+            <Clock className="w-4 h-4 text-slate-500" /> Scheduled
+          </button>
+          <button className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-slate-700 hover:bg-[#ebebeb] transition-colors">
+            <Library className="w-4 h-4 text-slate-500" /> Library
           </button>
         </div>
 
-        <div className="flex-1 overflow-y-auto px-3 py-4 custom-scrollbar space-y-1">
-          {/* File Explorer Integration */}
-          <h3 className="px-3 py-2 text-xs font-semibold text-slate-500 uppercase tracking-wider">File Explorer</h3>
-          <div className={`px-4 py-3 rounded-xl text-sm border flex items-center gap-3 transition-colors ${file ? 'bg-white border-amber-300 shadow-sm' : 'bg-[#f8f7f2] border-[#e5e3d8] border-dashed text-slate-500'}`}>
-             <FileText className={`w-4 h-4 shrink-0 ${file ? 'text-amber-600' : 'text-slate-400'}`} />
-             <span className="truncate">{file ? file.name : "No dataset active"}</span>
+        {/* Projects */}
+        <div className="px-3 py-2 mt-4">
+          <div className="flex items-center justify-between px-3 mb-2">
+            <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wide">Projects</span>
+            <Plus className="w-3.5 h-3.5 text-slate-400 cursor-pointer hover:text-slate-700 transition-colors" />
           </div>
-
-          <h3 className="px-3 py-2 mt-6 text-xs font-semibold text-slate-500 uppercase tracking-wider">Workspaces</h3>
-          {savedChats.map((chat) => (
-            <button 
-              key={chat.chat_id}
-              onClick={() => loadSavedChat(chat)}
-              className={`w-full text-left px-4 py-3 rounded-xl text-sm transition-all truncate border 
-                ${chatId === chat.chat_id 
-                  ? 'bg-[#f8f7f2] border-amber-300/50 text-slate-900 shadow-sm' 
-                  : 'border-transparent text-slate-600 hover:bg-[#f8f7f2] hover:text-slate-900'}`}
-            >
-              <div className="flex items-center gap-3">
-                <Database className="w-4 h-4 shrink-0 opacity-70" />
-                <span className="truncate">{chat.title}</span>
-              </div>
-            </button>
-          ))}
-          {savedChats.length === 0 && (
-            <p className="text-xs text-slate-400 px-3 py-2">No past history found.</p>
-          )}
+          <button className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-slate-700 hover:bg-[#ebebeb] transition-colors">
+            <FolderPlus className="w-4 h-4 text-slate-500" /> New project
+          </button>
         </div>
 
-        {user?.plan === 'free' && (
-          <div className="p-4 border-t border-[#e5e3d8] bg-[#f8f7f2]">
-            <div className="bg-slate-800 rounded-xl p-4 text-white shadow-md ring-1 ring-slate-700">
-              <h3 className="font-bold text-sm mb-1 flex items-center gap-2"><Sparkles className="w-4 h-4 text-amber-500"/> Upgrade to Pro</h3>
-              <p className="text-slate-300 text-xs mb-3">Unlock unlimited Agent actions.</p>
-              <button 
-                onClick={async () => {
-                  try {
-                    const res = await api.post('/api/stripe/create-checkout-session');
-                    window.location.href = res.data.url;
-                  } catch(e) {}
-                }} 
-                className="w-full bg-amber-600 text-white border-none px-4 py-2 rounded text-sm font-bold hover:bg-amber-500 transition-colors shadow-sm"
-              >
-                Upgrade ($9/mo)
-              </button>
-            </div>
+        {/* Tasks (Chat History) */}
+        <div className="flex-1 overflow-y-auto px-3 py-2 mt-4 custom-scrollbar">
+          <div className="flex items-center justify-between px-3 mb-2">
+            <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wide">Tasks</span>
+            <ListFilter className="w-3.5 h-3.5 text-slate-400 cursor-pointer hover:text-slate-700 transition-colors" />
           </div>
-        )}
+          <div className="space-y-0.5">
+            {savedChats.map((chat) => (
+              <button 
+                key={chat.chat_id}
+                onClick={() => loadSavedChat(chat)}
+                className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors truncate
+                  ${chatId === chat.chat_id ? 'bg-[#ebebeb] text-slate-900 font-medium' : 'text-slate-600 hover:bg-[#f2f2f2]'}`}
+              >
+                <div className="w-5 h-5 rounded bg-slate-300 shrink-0 flex items-center justify-center overflow-hidden">
+                  <Sparkles className="w-3 h-3 text-white" />
+                </div>
+                <span className="truncate">{chat.title}</span>
+              </button>
+            ))}
+          </div>
+        </div>
 
         {/* User Profile */}
-        <div className="p-4 border-t border-[#e5e3d8] bg-white flex items-center justify-between shrink-0">
-          <div className="flex items-center gap-3 overflow-hidden">
-            <div className="w-9 h-9 rounded-full bg-amber-100 border border-amber-200 flex items-center justify-center shrink-0 overflow-hidden">
+        <div className="p-4 border-t border-[#e5e3d8] bg-[#f9f9f9] flex items-center justify-between shrink-0">
+          <div className="flex items-center gap-3 overflow-hidden cursor-pointer">
+            <div className="w-7 h-7 rounded-full bg-purple-600 flex items-center justify-center shrink-0 overflow-hidden text-white font-medium text-xs">
               {user?.picture ? (
                 <img src={user.picture} alt="Profile" className="w-full h-full object-cover" />
               ) : (
-                <span className="text-amber-700 text-sm font-bold">{user?.name?.charAt(0) || 'U'}</span>
+                user?.name?.charAt(0).toUpperCase() || 'P'
               )}
             </div>
-            <div className="flex flex-col min-w-0">
-              <span className="text-sm font-medium text-slate-800 truncate">{user?.name || 'User'}</span>
-              <span className="text-xs text-slate-500 truncate">{user?.email || 'Logged in'}</span>
-            </div>
+            <span className="text-sm font-medium text-slate-700 truncate">{user?.name || 'pruthivi raj'}</span>
           </div>
-          <button 
-            onClick={logout}
-            className="p-2 text-slate-400 hover:text-red-500 transition-colors rounded-lg hover:bg-red-50"
-            title="Log out"
-          >
-            <LogOut className="w-4 h-4" />
-          </button>
+          <div className="flex items-center gap-2 text-slate-400">
+             <Monitor className="w-4 h-4 hover:text-slate-700 transition-colors cursor-pointer" />
+             <LogOut onClick={logout} className="w-4 h-4 hover:text-red-500 transition-colors cursor-pointer" title="Log out" />
+          </div>
         </div>
       </div>
 
       {/* CENTER CHAT AREA */}
       <div className="flex-1 flex flex-col items-center w-full h-full relative">
-        
+        {/* Top Bar */}
+        <div className="w-full p-4 flex items-center justify-between absolute top-0 z-20 pointer-events-none">
+          {!sidebarOpen && (
+             <button onClick={() => setSidebarOpen(true)} className="pointer-events-auto p-2 bg-white border border-[#e5e3d8] rounded-md shadow-sm">
+               <Menu className="w-4 h-4 text-slate-600" />
+             </button>
+          )}
+          <div className={`pointer-events-auto flex items-center gap-1.5 text-sm font-medium text-slate-700 hover:bg-slate-100 px-3 py-1.5 rounded-lg cursor-pointer transition-colors ${!sidebarOpen ? 'ml-4' : 'ml-0'}`}>
+             SCUZY 1.6 Lite <ChevronDown className="w-3.5 h-3.5 opacity-50" />
+          </div>
+          <div className="pointer-events-auto flex items-center gap-1 text-sm font-medium text-slate-600 bg-white border border-[#e5e3d8] px-3 py-1.5 rounded-full shadow-sm">
+             <Sparkles className="w-3.5 h-3.5 text-slate-400" /> 1,185
+          </div>
+        </div>
+
         {/* Chat Feed */}
-        <div className="flex-1 w-full max-w-4xl overflow-y-auto p-4 md:p-8 custom-scrollbar scroll-smooth flex flex-col z-10">
+        <div className="flex-1 w-full max-w-4xl overflow-y-auto p-4 md:p-8 pt-20 custom-scrollbar scroll-smooth flex flex-col z-10">
           {chatHistory.length === 0 && !loading && (
-            <div className="h-full flex flex-col items-center justify-center text-slate-500 space-y-6">
-              <div className="w-20 h-20 bg-white border border-[#e5e3d8] rounded-3xl flex items-center justify-center shadow-sm animate-pulse-slow">
-                <Sparkles className="w-10 h-10 text-amber-600" />
+            <div className="h-full flex flex-col items-center justify-center space-y-8 animate-in fade-in duration-700 pb-20">
+              <div className="flex items-center gap-2 text-sm text-slate-500 font-medium">
+                Free plan <span className="text-[#e5e3d8]">|</span> <span className="text-blue-500 cursor-pointer">Upgrade</span>
               </div>
-              <h2 className="text-3xl font-serif text-slate-800">Welcome to SCUZY</h2>
-              <p className="text-slate-500 max-w-md text-center text-[15px] leading-relaxed">
-                I am your autonomous Data Agent. Attach a dataset and instruct me to build models, clean rows, or generate interactive charts.
-              </p>
+              <h2 className="text-4xl md:text-5xl font-serif text-slate-800 text-center tracking-tight">What can I do for you?</h2>
             </div>
           )}
 
@@ -402,58 +412,93 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* Floating Input Area */}
-        <div className="absolute bottom-6 left-0 right-0 flex justify-center px-4 md:px-8 z-20 pointer-events-none">
+        {/* Floating Input Area (Manus Style) */}
+        <div className={`absolute left-0 right-0 flex flex-col items-center px-4 md:px-8 z-20 pointer-events-none transition-all duration-500 ${chatHistory.length === 0 ? 'top-1/2 -translate-y-12' : 'bottom-6'}`}>
           <div className="w-full max-w-3xl pointer-events-auto">
-            {error && <div className="mb-2 text-red-700 text-sm font-medium px-4 bg-red-50 rounded-lg py-2 border border-red-200 w-fit mx-auto shadow-sm">{error}</div>}
+            {error && <div className="mb-4 text-red-700 text-sm font-medium px-4 bg-red-50 rounded-lg py-2 border border-red-200 w-fit mx-auto shadow-sm">{error}</div>}
             
-            <div className="bg-white rounded-2xl shadow-[0_4px_20px_rgba(0,0,0,0.08)] border border-[#e5e3d8] focus-within:ring-2 focus-within:ring-amber-500/20 focus-within:border-amber-400 transition-all p-3 flex flex-col">
+            <div className="bg-white rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.08)] border border-[#e5e3d8] transition-all p-3 flex flex-col relative overflow-hidden">
               
               {file && (
-                <div className="flex items-center gap-2 mb-2 px-2">
+                <div className="flex items-center gap-2 mb-3 px-2">
                   <div className="bg-[#f8f7f2] border border-[#e5e3d8] rounded-lg px-3 py-1.5 flex items-center gap-2 shadow-sm">
-                    <FileText className="w-4 h-4 text-slate-500" />
-                    <span className="text-xs font-medium text-slate-700">{file.name}</span>
-                    <button onClick={() => setFile(null)} className="text-slate-400 hover:text-red-500 ml-2 transition-colors">&times;</button>
+                     <FileText className="w-4 h-4 text-slate-500" />
+                     <span className="text-xs font-medium text-slate-700">{file.name}</span>
+                     <button onClick={() => setFile(null)} className="text-slate-400 hover:text-red-500 ml-2 transition-colors">&times;</button>
                   </div>
                 </div>
               )}
 
-              <div className="flex items-end gap-2">
-                <input 
-                  type="file" 
-                  accept=".csv" 
-                  ref={fileInputRef} 
-                  onChange={handleFileChange} 
-                  className="hidden" 
-                />
-                <button 
-                  onClick={() => fileInputRef.current?.click()}
-                  className="p-3 text-slate-400 hover:text-amber-600 hover:bg-[#f8f7f2] rounded-xl transition-all shrink-0 border border-transparent hover:border-[#e5e3d8]"
-                  title="Attach CSV"
-                >
-                  <Paperclip className="w-5 h-5" />
-                </button>
-                
-                <textarea
-                  className="w-full bg-transparent p-3 text-[15px] text-slate-800 placeholder-slate-400 focus:outline-none resize-none max-h-40 min-h-[48px] leading-relaxed custom-scrollbar"
-                  rows={1}
-                  placeholder={file ? "Instruct the Agent to analyze this data..." : "Attach a dataset or type a prompt..."}
-                  value={question}
-                  onChange={e => {
-                    setQuestion(e.target.value);
-                    e.target.style.height = 'auto';
-                    e.target.style.height = Math.min(e.target.scrollHeight, 160) + 'px';
-                  }}
-                  onKeyDown={e => {
-                    if (e.key === 'Enter' && !e.shiftKey) {
-                      e.preventDefault();
-                      handleAnalyze();
-                    }
-                  }}
-                />
+              <textarea
+                className="w-full bg-transparent px-3 pt-3 pb-12 text-[15px] text-slate-800 placeholder-slate-400 focus:outline-none resize-none max-h-48 min-h-[60px] leading-relaxed custom-scrollbar"
+                rows={1}
+                placeholder={file ? "Instruct the Agent to analyze this data..." : "Assign a task or type / for more"}
+                value={question}
+                onChange={e => {
+                  setQuestion(e.target.value);
+                  e.target.style.height = 'auto';
+                  e.target.style.height = Math.min(e.target.scrollHeight, 200) + 'px';
+                }}
+                onKeyDown={e => {
+                  if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    handleAnalyze();
+                  }
+                }}
+              />
+
+              <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between bg-white pt-2">
+                 <div className="flex items-center gap-1.5">
+                    <input type="file" accept=".csv" ref={fileInputRef} onChange={handleFileChange} className="hidden" />
+                    <button onClick={() => fileInputRef.current?.click()} className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-[#f2f2f2] text-slate-500 transition-colors border border-[#e5e3d8]">
+                      <Plus className="w-4 h-4" />
+                    </button>
+                    <button className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-[#f2f2f2] text-slate-500 transition-colors border border-[#e5e3d8]">
+                      <Github className="w-4 h-4" />
+                    </button>
+                    <button className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-[#f2f2f2] text-slate-500 transition-colors border border-[#e5e3d8]">
+                      <Monitor className="w-4 h-4" />
+                    </button>
+                 </div>
+                 
+                 <div className="flex items-center gap-1.5">
+                    <button className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-[#f2f2f2] text-slate-400 transition-colors">
+                      <Activity className="w-4 h-4" />
+                    </button>
+                    <button className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-[#f2f2f2] text-slate-400 transition-colors">
+                      <Mic className="w-4 h-4" />
+                    </button>
+                    <button 
+                      onClick={handleAnalyze}
+                      disabled={!question}
+                      className={`w-8 h-8 flex items-center justify-center rounded-full transition-colors ${question ? 'bg-slate-800 text-white hover:bg-slate-700' : 'bg-[#f2f2f2] text-slate-400'}`}
+                    >
+                      <ArrowUp className="w-4 h-4" />
+                    </button>
+                 </div>
               </div>
             </div>
+            
+            {/* Suggestion Pills */}
+            {chatHistory.length === 0 && !loading && (
+              <div className="mt-6 flex flex-wrap items-center justify-center gap-3 pointer-events-auto animate-in fade-in slide-in-from-bottom-4 duration-700 delay-150">
+                <button className="flex items-center gap-2 px-4 py-2 bg-white border border-[#e5e3d8] rounded-full text-sm text-slate-600 hover:bg-[#f8f7f2] shadow-sm transition-colors">
+                   <Database className="w-4 h-4" /> Analyze Data
+                </button>
+                <button className="flex items-center gap-2 px-4 py-2 bg-white border border-[#e5e3d8] rounded-full text-sm text-slate-600 hover:bg-[#f8f7f2] shadow-sm transition-colors">
+                   <LayoutDashboard className="w-4 h-4" /> Build Dashboards
+                </button>
+                <button className="flex items-center gap-2 px-4 py-2 bg-white border border-[#e5e3d8] rounded-full text-sm text-slate-600 hover:bg-[#f8f7f2] shadow-sm transition-colors">
+                   <Activity className="w-4 h-4" /> Train ML Models
+                </button>
+                <button className="flex items-center gap-2 px-4 py-2 bg-white border border-[#e5e3d8] rounded-full text-sm text-slate-600 hover:bg-[#f8f7f2] shadow-sm transition-colors">
+                   <Sparkles className="w-4 h-4" /> Design
+                </button>
+                <button className="px-4 py-2 bg-white border border-[#e5e3d8] rounded-full text-sm text-slate-600 hover:bg-[#f8f7f2] shadow-sm transition-colors">
+                   More
+                </button>
+              </div>
+            )}
           </div>
         </div>
         
