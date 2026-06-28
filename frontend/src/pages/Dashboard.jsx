@@ -326,17 +326,19 @@ export default function Dashboard() {
                   </div>
                   <div className="w-full max-w-[90%] space-y-4">
                     
-                    {/* Simulated Thought Block */}
-                    <div className="bg-[#f8f7f2] border border-[#e5e3d8] rounded-xl p-3 inline-flex items-center gap-3 text-xs text-slate-600 shadow-sm">
-                      <Activity className="w-4 h-4 text-slate-400" />
-                      <span>Task completed successfully.</span>
-                      <button 
-                        onClick={() => setActiveData(chat.result)}
-                        className="ml-4 bg-white border border-[#e5e3d8] hover:bg-slate-50 px-2 py-1 rounded transition-colors text-slate-700 flex items-center gap-1 shadow-sm"
-                      >
-                        <LayoutDashboard className="w-3 h-3"/> View Data
-                      </button>
-                    </div>
+                    {/* Simulated Thought Block (Only if data was processed) */}
+                    {(chat.result.metrics?.length > 0 || chat.result.charts?.length > 0 || chat.result.chart || chat.result.headData || chat.result.cleanedCsv) && (
+                      <div className="bg-[#f8f7f2] border border-[#e5e3d8] rounded-xl p-3 inline-flex items-center gap-3 text-xs text-slate-600 shadow-sm">
+                        <Activity className="w-4 h-4 text-slate-400" />
+                        <span>Task completed successfully.</span>
+                        <button 
+                          onClick={() => setActiveData(chat.result)}
+                          className="ml-4 bg-white border border-[#e5e3d8] hover:bg-slate-50 px-2 py-1 rounded transition-colors text-slate-700 flex items-center gap-1 shadow-sm"
+                        >
+                          <LayoutDashboard className="w-3 h-3"/> View Data
+                        </button>
+                      </div>
+                    )}
 
                     <div className="prose prose-p:text-slate-700 prose-strong:text-slate-900 max-w-none text-[15px] leading-relaxed">
                       <p>{chat.result.answer}</p>
