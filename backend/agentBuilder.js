@@ -95,12 +95,18 @@ function buildAgent(csvDataString) {
     id: 'generate_chart',
     description: 'Generates a visual chart (bar, line, pie, area) based on the data. ALWAYS use this when the user asks for a visual or when it would help explain trends.',
     inputSchema: z.object({
-      type: z.enum(['bar', 'line', 'pie', 'area']),
+      type: z.string().describe('The type of chart. MUST be one of: bar, line, pie, area. Use bar as default.'),
       title: z.string(),
       data: z.array(z.object({ name: z.string(), value: z.number() })).max(15).describe("The data points for the chart, max 15 points.")
     }),
     execute: async (params) => {
       const input = params.context || params.inputData || params.input || params;
+      const validTypes = ['bar', 'line', 'pie', 'area'];
+      let safeType = String(input.type).toLowerCase();
+      if (!validTypes.includes(safeType)) {
+        safeType = 'bar'; // Fallback instead of crashing
+      }
+      input.type = safeType;
       chartConfig = input;
       return { success: true, message: `Chart "${input.title}" generated successfully.` };
     }
