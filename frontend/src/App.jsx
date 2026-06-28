@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { AuthProvider, useAuth } from './hooks/useAuth';
 import Navbar from './components/Navbar';
 import Landing from './pages/Landing';
@@ -13,28 +13,38 @@ const ProtectedRoute = ({ children }) => {
   return children;
 };
 
+const Layout = ({ children }) => {
+  const location = useLocation();
+  const isDashboard = location.pathname === '/dashboard';
+  return (
+    <div className={`min-h-screen flex flex-col ${isDashboard ? 'overflow-hidden h-screen' : ''}`}>
+      {!isDashboard && <Navbar />}
+      <main className="flex-1 flex flex-col min-h-0">
+        {children}
+      </main>
+    </div>
+  );
+};
+
 export default function App() {
   return (
     <AuthProvider>
       <Router>
-        <div className="min-h-screen flex flex-col">
-          <Navbar />
-          <main className="flex-1">
-            <Routes>
-              <Route path="/" element={<Landing />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/auth/callback" element={<AuthCallback />} />
-              <Route 
-                path="/dashboard" 
-                element={
-                  <ProtectedRoute>
-                    <Dashboard />
-                  </ProtectedRoute>
-                } 
-              />
-            </Routes>
-          </main>
-        </div>
+        <Layout>
+          <Routes>
+            <Route path="/" element={<Landing />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/auth/callback" element={<AuthCallback />} />
+            <Route 
+              path="/dashboard" 
+              element={
+                <ProtectedRoute>
+                  <Dashboard />
+                </ProtectedRoute>
+              } 
+            />
+          </Routes>
+        </Layout>
       </Router>
     </AuthProvider>
   );
