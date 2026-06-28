@@ -15,6 +15,7 @@ export default function Dashboard() {
   const [savedChats, setSavedChats] = useState([]);
   const [error, setError] = useState('');
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [toastMessage, setToastMessage] = useState('');
   
   // Right panel state
   const [activeData, setActiveData] = useState(null);
@@ -29,6 +30,11 @@ export default function Dashboard() {
     "Training and validating...",
     "Generating insights..."
   ];
+
+  const showToast = (message) => {
+    setToastMessage(message);
+    setTimeout(() => setToastMessage(''), 3000);
+  };
 
   useEffect(() => {
     fetchHistory();
@@ -223,16 +229,16 @@ export default function Dashboard() {
           <button onClick={startNewChat} className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-slate-700 hover:bg-[#ebebeb] transition-colors">
             <Edit className="w-4 h-4 text-slate-500" /> New task
           </button>
-          <button className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-slate-700 hover:bg-[#ebebeb] transition-colors">
+          <button onClick={() => showToast('Agent workflows coming in v2.0')} className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-slate-700 hover:bg-[#ebebeb] transition-colors">
             <Bot className="w-4 h-4 text-slate-500" /> Agent
           </button>
-          <button className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-slate-700 hover:bg-[#ebebeb] transition-colors">
+          <button onClick={() => showToast('Plugins coming in v2.0')} className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-slate-700 hover:bg-[#ebebeb] transition-colors">
             <Grid className="w-4 h-4 text-slate-500" /> Plugins
           </button>
-          <button className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-slate-700 hover:bg-[#ebebeb] transition-colors">
+          <button onClick={() => showToast('Scheduling coming in v2.0')} className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-slate-700 hover:bg-[#ebebeb] transition-colors">
             <Clock className="w-4 h-4 text-slate-500" /> Scheduled
           </button>
-          <button className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-slate-700 hover:bg-[#ebebeb] transition-colors">
+          <button onClick={() => showToast('Asset library coming in v2.0')} className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-slate-700 hover:bg-[#ebebeb] transition-colors">
             <Library className="w-4 h-4 text-slate-500" /> Library
           </button>
         </div>
@@ -243,7 +249,7 @@ export default function Dashboard() {
             <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wide">Projects</span>
             <Plus className="w-3.5 h-3.5 text-slate-400 cursor-pointer hover:text-slate-700 transition-colors" />
           </div>
-          <button className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-slate-700 hover:bg-[#ebebeb] transition-colors">
+          <button onClick={startNewChat} className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-slate-700 hover:bg-[#ebebeb] transition-colors">
             <FolderPlus className="w-4 h-4 text-slate-500" /> New project
           </button>
         </div>
@@ -453,19 +459,19 @@ export default function Dashboard() {
                     <button onClick={() => fileInputRef.current?.click()} className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-[#f2f2f2] text-slate-500 transition-colors border border-[#e5e3d8]">
                       <Plus className="w-4 h-4" />
                     </button>
-                    <button className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-[#f2f2f2] text-slate-500 transition-colors border border-[#e5e3d8]">
+                    <button onClick={() => showToast('Code generation coming in v2.0')} className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-[#f2f2f2] text-slate-500 transition-colors border border-[#e5e3d8]">
                       <Code className="w-4 h-4" />
                     </button>
-                    <button className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-[#f2f2f2] text-slate-500 transition-colors border border-[#e5e3d8]">
+                    <button onClick={() => showToast('System monitoring coming in v2.0')} className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-[#f2f2f2] text-slate-500 transition-colors border border-[#e5e3d8]">
                       <Monitor className="w-4 h-4" />
                     </button>
                  </div>
                  
                  <div className="flex items-center gap-1.5">
-                    <button className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-[#f2f2f2] text-slate-400 transition-colors">
+                    <button onClick={() => showToast('Live activity coming in v2.0')} className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-[#f2f2f2] text-slate-400 transition-colors">
                       <Activity className="w-4 h-4" />
                     </button>
-                    <button className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-[#f2f2f2] text-slate-400 transition-colors">
+                    <button onClick={() => showToast('Voice dictation coming in v2.0')} className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-[#f2f2f2] text-slate-400 transition-colors">
                       <Mic className="w-4 h-4" />
                     </button>
                     <button 
@@ -482,19 +488,19 @@ export default function Dashboard() {
             {/* Suggestion Pills */}
             {chatHistory.length === 0 && !loading && (
               <div className="mt-6 flex flex-wrap items-center justify-center gap-3 pointer-events-auto animate-in fade-in slide-in-from-bottom-4 duration-700 delay-150">
-                <button className="flex items-center gap-2 px-4 py-2 bg-white border border-[#e5e3d8] rounded-full text-sm text-slate-600 hover:bg-[#f8f7f2] shadow-sm transition-colors">
+                <button onClick={() => setQuestion('Please analyze this dataset and summarize the key statistical trends.')} className="flex items-center gap-2 px-4 py-2 bg-white border border-[#e5e3d8] rounded-full text-sm text-slate-600 hover:bg-[#f8f7f2] shadow-sm transition-colors">
                    <Database className="w-4 h-4" /> Analyze Data
                 </button>
-                <button className="flex items-center gap-2 px-4 py-2 bg-white border border-[#e5e3d8] rounded-full text-sm text-slate-600 hover:bg-[#f8f7f2] shadow-sm transition-colors">
+                <button onClick={() => setQuestion('Please build interactive charts and dashboards from the provided data.')} className="flex items-center gap-2 px-4 py-2 bg-white border border-[#e5e3d8] rounded-full text-sm text-slate-600 hover:bg-[#f8f7f2] shadow-sm transition-colors">
                    <LayoutDashboard className="w-4 h-4" /> Build Dashboards
                 </button>
-                <button className="flex items-center gap-2 px-4 py-2 bg-white border border-[#e5e3d8] rounded-full text-sm text-slate-600 hover:bg-[#f8f7f2] shadow-sm transition-colors">
+                <button onClick={() => setQuestion('Please run a machine learning regression model to predict the target variable.')} className="flex items-center gap-2 px-4 py-2 bg-white border border-[#e5e3d8] rounded-full text-sm text-slate-600 hover:bg-[#f8f7f2] shadow-sm transition-colors">
                    <Activity className="w-4 h-4" /> Train ML Models
                 </button>
-                <button className="flex items-center gap-2 px-4 py-2 bg-white border border-[#e5e3d8] rounded-full text-sm text-slate-600 hover:bg-[#f8f7f2] shadow-sm transition-colors">
+                <button onClick={() => setQuestion('Please design a custom visual layout for this data summary.')} className="flex items-center gap-2 px-4 py-2 bg-white border border-[#e5e3d8] rounded-full text-sm text-slate-600 hover:bg-[#f8f7f2] shadow-sm transition-colors">
                    <Sparkles className="w-4 h-4" /> Design
                 </button>
-                <button className="px-4 py-2 bg-white border border-[#e5e3d8] rounded-full text-sm text-slate-600 hover:bg-[#f8f7f2] shadow-sm transition-colors">
+                <button onClick={() => showToast('More templates coming soon')} className="px-4 py-2 bg-white border border-[#e5e3d8] rounded-full text-sm text-slate-600 hover:bg-[#f8f7f2] shadow-sm transition-colors">
                    More
                 </button>
               </div>
@@ -596,6 +602,15 @@ export default function Dashboard() {
                </button>
              )}
 
+          </div>
+        </div>
+      )}
+      {/* Toast Notification */}
+      {toastMessage && (
+        <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 animate-in fade-in slide-in-from-bottom-4 duration-300">
+          <div className="bg-slate-800 text-white px-4 py-2.5 rounded-full text-sm font-medium shadow-lg flex items-center gap-2">
+            <Sparkles className="w-4 h-4 text-amber-400" />
+            {toastMessage}
           </div>
         </div>
       )}
