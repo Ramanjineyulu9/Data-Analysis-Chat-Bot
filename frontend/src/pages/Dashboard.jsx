@@ -2,10 +2,10 @@ import { useState, useRef, useEffect } from 'react';
 import Chart from '../components/Chart';
 import api from '../lib/api';
 import { useAuth } from '../hooks/useAuth';
-import { Loader2, Sparkles, Download, Paperclip, FileText, Menu, Plus, Activity, Database, LayoutDashboard } from 'lucide-react';
+import { Loader2, Sparkles, Download, Paperclip, FileText, Menu, Plus, Activity, Database, LayoutDashboard, LogOut } from 'lucide-react';
 
 export default function Dashboard() {
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
   const [file, setFile] = useState(null);
   const [question, setQuestion] = useState('');
   const [loading, setLoading] = useState(false);
@@ -258,6 +258,30 @@ export default function Dashboard() {
             </div>
           </div>
         )}
+
+        {/* User Profile */}
+        <div className="p-4 border-t border-ocean-500/20 bg-deepblue-950/80 flex items-center justify-between shrink-0">
+          <div className="flex items-center gap-3 overflow-hidden">
+            <div className="w-9 h-9 rounded-full bg-ocean-600/30 border border-ocean-400/50 flex items-center justify-center shrink-0 overflow-hidden shadow-inner">
+              {user?.picture ? (
+                <img src={user.picture} alt="Profile" className="w-full h-full object-cover" />
+              ) : (
+                <span className="text-ocean-100 text-sm font-bold">{user?.name?.charAt(0) || 'U'}</span>
+              )}
+            </div>
+            <div className="flex flex-col min-w-0">
+              <span className="text-sm font-medium text-ocean-50 truncate">{user?.name || 'User'}</span>
+              <span className="text-xs text-ocean-400/70 truncate">{user?.email || 'Logged in'}</span>
+            </div>
+          </div>
+          <button 
+            onClick={logout}
+            className="p-2 text-slate-400 hover:text-red-400 transition-colors rounded-lg hover:bg-red-900/30"
+            title="Log out"
+          >
+            <LogOut className="w-4 h-4" />
+          </button>
+        </div>
       </div>
 
       {/* CENTER CHAT AREA */}
